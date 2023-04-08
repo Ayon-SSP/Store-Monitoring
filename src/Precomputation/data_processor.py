@@ -30,41 +30,13 @@ def get_status_timerange(menu_hours: Dict[str, List], store_status_TimeRange_Act
 
     # get the active_hours where the start_time just after '2023-01-25 22:00:00.000000+00:00' and end_time just after '2023-01-25 23:00:00.000000+00:00'
     sub_status_timerange = store_status_TimeRange_ActInact[(store_status_TimeRange_ActInact['end_time'] > LASK_HR_DATETIME) & (store_status_TimeRange_ActInact['start_time'] < CURRENT_DATETIME_SET)]
+    # ⚠️ Need to work on this part -> Just remove the intervals form sub_status_timerange other tha the range menu_hours
+
     if not len(sub_status_timerange):
         return [datetime.timedelta(hours=0), datetime.timedelta(hours=0)]
 
 
-    # ⚠️ Need to work on this part
-    # menu_hours =
-    # {0: [[datetime.time(0, 0), datetime.time(1, 0)], [datetime.time(7, 0), datetime.time(23, 59, 59)]],
-    # 1: [[datetime.time(0, 0), datetime.time(1, 0)], [datetime.time(7, 0), datetime.time(23, 59, 59)]],
-    # 2: [[datetime.time(0, 0), datetime.time(1, 0)], [datetime.time(7, 0), datetime.time(23, 59, 59)]],
-    # 3: [[datetime.time(0, 0), datetime.time(1, 0)], [datetime.time(7, 0), datetime.time(23, 59, 59)]],
-    # 4: [[datetime.time(0, 0), datetime.time(1, 0)], [datetime.time(7, 0), datetime.time(23, 59, 59)]],
-    # 5: [[datetime.time(0, 0), datetime.time(1, 0)], [datetime.time(7, 0), datetime.time(23, 59, 59)]],
-    # 6: [[datetime.time(0, 0), datetime.time(1, 0)], [datetime.time(7, 0), datetime.time(23, 59, 59)]]}
-    # get the sum of all the time difference list of list 2 values in the menu_hours_curData eg : [[datetime.time(0, 0), datetime.time(1, 0)], [datetime.time(7, 0), datetime.time(23, 59, 59)]] = 22:59:59 hours and 59 minutes and 59 seconds store this time by appending it to the list
-    # menu_hours_curData = []
-    # for i in range(0, 7):
-    #     menuTotalTime = datetime.timedelta(0)
-    #     for j in range(0, len(menu_hours[i])):
-    #         t1, t2 = menu_hours[i][j][0], menu_hours[i][j][1]
-    #         menuTotalTime += datetime.datetime.combine(datetime.date.today(), t2)-datetime.datetime.combine(datetime.date.today(), t1)
-    #     menu_hours_curData.append(convert_times(menuTotalTime))
-    # print(menu_hours_curData)
 
-    # remove the rows where the time range is not in between the menu hours : Dict[str, List] =
-    # menu_hours_curData =
-    # {0: [[datetime.time(0, 0), datetime.time(1, 0)], [datetime.time(7, 0), datetime.time(23, 59, 59)]],
-    # 1: [[datetime.time(0, 0), datetime.time(1, 0)], [datetime.time(7, 0), datetime.time(23, 59, 59)]],
-    # 2: [[datetime.time(0, 0), datetime.time(1, 0)], [datetime.time(7, 0), datetime.time(23, 59, 59)]],
-    # 3: [[datetime.time(0, 0), datetime.time(1, 0)], [datetime.time(7, 0), datetime.time(23, 59, 59)]],
-    # 4: [[datetime.time(0, 0), datetime.time(1, 0)], [datetime.time(7, 0), datetime.time(23, 59, 59)]],
-    # 5: [[datetime.time(0, 0), datetime.time(1, 0)], [datetime.time(7, 0), datetime.time(23, 59, 59)]],
-    # 6: [[datetime.time(0, 0), datetime.time(1, 0)], [datetime.time(7, 0), datetime.time(23, 59, 59)]]}
-    # where the key is the weekday and the value is the list of time ranges for that day
-
-    # sub_status_timerange = sub_status_timerange[sub_status_timerange['start_time'].apply(lambda x: x.time() in menu_hours[x.weekday()]) & sub_status_timerange['end_time'].apply(lambda x: x.time() in menu_hours[x.weekday()])]
 
     sum_active_hours, sum_inactive_hours = sub_status_timerange['active_hours'].sum(), sub_status_timerange['inactive_hours'].sum()
 
