@@ -1,0 +1,10 @@
+
+.vscode
+
+Learning
+/Data/*.csv
+/venv
+
+*.pyc
+__init__.py
+__pycache__
