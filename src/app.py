@@ -1,5 +1,5 @@
 import json
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 import uuid
 
 app = Flask(__name__)
@@ -52,6 +52,12 @@ def get_report():
     else:
         return jsonify({'status': 'Running'})
 
+@app.route('/download', methods=['GET', 'POST'])
+def download_file():
+    # return send_file(filename, as_attachment=True)
+    file_path = 'res/res.csv'
+    return send_file(file_path, as_attachment=True)
+
 # Function to check if the report generation is complete
 def is_report_complete(report_id):
     # Return True if the report generation is complete, else False
@@ -75,7 +81,7 @@ def is_report_complete(report_id):
 def get_csv(report_id):
     # Your code to get the CSV file goes here
     # script to download csv file in the browser using flask where the file is in the res/<report_id>.csv
-    return 'Download the csv file'
+    return 'Download the csv file from /download'
 
 # Run the Flask app
 if __name__ == '__main__':
