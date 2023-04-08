@@ -17,6 +17,43 @@ def get_store_ids():
                     , engine)
     return store_ids
 
+def get_store_report_file(report_id):
+    """ copy csv query from the store_report table """
+    conn = None
+    try:
+        # read database configuration
+        # connect to the PostgreSQL database
+        conn = psycopg2.connect(
+            host = config.hostname,
+            dbname = config.database,
+            user = config.username,
+            password = config.pwd,
+            port = config.port_id
+        )
+        # create a new cursor
+        cur = conn.cursor()
+        sql_command = r"""
+            \copy store_report TO '/root/anyc/AllRepos/SSM_Backend/src/res/res.csv' DELIMITER ',' CSV HEADER;
+        """
+
+
+        # execute the copy statement
+        # cur.execute("COPY store_report TO '/root/anyc/AllRepos/SSM_Backend/src/res/resl.csv' DELIMITER ',' CSV HEADER;")
+        # cur.execute('''\copy store_report TO "/root/anyc/AllRepos/SSM_Backend/src/res/resl.csv" DELIMITER "," CSV HEADER;''')
+        cur.execute(sql_command)
+
+        # cur.execute(r"\COPY store_report TO '/root/anyc/AllRepos/SSM_Backend/src/res/resl.csv' DELIMITER ',' CSV HEADER;")
+        # cur.execute("copy store_report TO '/root/anyc/AllRepos/SSM_Backend/src/res/{}.csv' DELIMITER ',' CSV HEADER;".format('small'))
+        conn.commit()
+
+    except Exception as error:
+        print(error)
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+
 def store_report_insert(
     store_id,
     uptime_last_hour,
