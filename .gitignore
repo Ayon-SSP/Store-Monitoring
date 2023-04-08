@@ -2,6 +2,7 @@
 
 /Data/*.csv
 /venv
+.venv
 
 *.pyc
 __init__.py
