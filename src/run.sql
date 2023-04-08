@@ -115,4 +115,4 @@ join store_timezone tz on ss.store_id = tz.store_id
 where ss.store_id = 8444136742823051302
 order by timestamp_local;
 
-\copy store_report TO '/root/anyc/AllRepos/SSM_Backend/src/res/res.csv' DELIMITER ',' CSV HEADER;
+\copy store_report TO '/root/anyc/AllRepos/SSM_Backend/res/res.csv' DELIMITER ',' CSV HEADER;

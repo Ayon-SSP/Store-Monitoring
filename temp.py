@@ -1,1 +1,0 @@
-print("\copy store_report TO '/root/anyc/AllRepos/SSM_Backend/src/res/{}.csv' DELIMITER ',' CSV HEADER;".format('lskjdfsldjfsaljfs'))
