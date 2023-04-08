@@ -13,3 +13,5 @@ tuts.sql
 src/Precomputation/Configuration.py
 src/Content/Configuration.py
 src/Learning
+
+old_block_model.txt
