@@ -6,5 +6,6 @@ username = '<postgres>'
 pwd = '<password>'
 port_id = 5432
 
+
 #! databasetype://username:password@hostname:port/database
 dbLink = 'postgresql://'+username+':'+pwd+'@'+hostname+':'+str(port_id)+'/'+database
