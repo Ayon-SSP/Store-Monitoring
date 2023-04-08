@@ -95,7 +95,7 @@ class Data:
                             '''
                             .format(self.store_id), engine)
 
-        timezone_str = store_timezone['timezone_str'][0]
+        timezone_str = store_timezone['timezone_str'][0] if len(store_timezone) > 0 else 'America/Chicago'
         return timezone_str
 
     def get_menu_hours(self):
