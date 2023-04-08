@@ -54,3 +54,175 @@
        - File download
 
 -> Flask API is used to manage users, files and data manipulation.
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                                          User Request
+                                                                                               ↓
+                                                                                (HTTP request)--> [REST API with Flask]
+                                                                                         ↓
+                                        [PostgreSQL Database] <--(SQLAlchemy ORM)--- [Preprocessing]
+                                             ↑         ↓          ↑        |
+                                             |         |          |        |
+                                        store_report   |     store_status |
+                                                       |        |
+                                                       +--------+
+                                                            |
+                                                            v
+                                             +-----------------------+
+                                             |  Backend APIs(Flask)  |
+                                             +-----------------------+
+                                                            |
+                                                            |
+                                                            v
+                              +-----------------------------------------------+
+                              |        User Data Management and Storage       |
+                              +-----------------------------------------------+
+                                                            |
+                                                            |
+                                                            v
++---------------------------------------------------------------+
+|            Data Storage and Manipulation (CRUD)               |
++---------------------------------------------------------------+
+|    logic for computing the hours overlap and uptime/downtime  |
+|    psql dealing  with Time typecasting                        |
+|    Data preprocessing                                         |
+|    CSV -> Database                                            |
++---------------------------------------------------------------+
+                |                                       |
+                |                                       |
+ +---------------------------------+        +----------------------------+
+ |     /get_report Endpoint        |        |  /trigger_report Endpoint  |
+ +---------------------------------+        +----------------------------+
+                |                                       |
+                |                                       |
+                v                                       v
+   +-------------------------+           +-----------------------------------------------+
+   |  Generate Report        |           |     File Download [Return Report or CSV File] |
+   +-------------------------+           +-----------------------------------------------+
+
+-> Frontend NaT
+-> Backend server takes care of
+       - User DATA management
+       - Data storage
+       - CSV -> Database
+       - Data manipulation(CRUD)
+       - logic for computing the hours overlap and uptime/downtime
+       - psql dealing  with Time typecasting
+       - Data preprocessing
+       - File download
+
+-> Flask API is used to manage users, files and data manipulation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    User Request
+         ↓
+[Frontend] --(HTTP request)--> [REST API with Flask]
+               ↓                             ↓
+ +---------------------------------+        +----------------------------+
+ |     /get_report Endpoint        |        |  /trigger_report Endpoint  |
+ +---------------------------------+        +----------------------------+
+
+
+   +-------------------------+           +-----------------------------------------------+
+   |  Generate Report        |           |     File Download [Return Report or CSV File] |
+   +-------------------------+           +-----------------------------------------------+
+
+
+
+
+
+                                                   ↓
+                                       [PostgreSQL Database] <--(SQLAlchemy ORM)--- [Preprocessing]
+                                         ↑         ↓          ↑        |
+                                         |         |          |        |
+                                    store_report   |     store_status |
+                                                   |        |
+                                                   +--------+
+                                                        |
+                                                        v
+                                            +-----------------------+
+                                            |  Backend APIs(Flask)  |
+                                            +-----------------------+
+                                                        |
+                                                        |
+                                                        v
+                            +-----------------------------------------------+
+                            |        User Data Management and Storage       |
+                            +-----------------------------------------------+
+                                                        |
+                                                        |
+                                                        v
++---------------------------------------------------------------+
+|            Data Storage and Manipulation (CRUD)               |
++---------------------------------------------------------------+
+|    logic for computing the hours overlap and uptime/downtime  |
+|    psql dealing  with Time typecasting                        |
+|    Data preprocessing                                         |
+|    CSV -> Database                                            |
++---------------------------------------------------------------+
+                |                                       |
+                |                                       |
+                |                                       |
+                |                                       |
+                v                                       v
+
+-> Frontend NaT
+-> Backend server takes care of
+       - User DATA management
+       - Data storage
+       - CSV -> Database
+       - Data manipulation(CRUD)
+       - logic for computing the hours overlap and uptime/downtime
+       - psql dealing  with Time typecasting
+       - Data preprocessing
+       - File download
+
+-> Flask API is used to manage users, files and data manipulation.
+
+
+
+
+
+
+
+
+
