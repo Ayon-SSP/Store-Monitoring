@@ -71,7 +71,9 @@ while True:
 
             with open('report_status.json', 'r') as f:
                 reports_json_live = json.load(f)
+
             reports_json_live[report_id]['status'] = 'Complete'
+
             with open('report_status.json', 'w') as f:
                 json.dump(reports_json_live, f)
             print(report_id, "Report generated successfully")
