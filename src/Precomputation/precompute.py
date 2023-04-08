@@ -68,9 +68,11 @@ while True:
             smData.truncate_store_report()
             compute()
             smData.get_store_report_file(report_id)
-            # ⚠️ report_json is modified if parallelly processing and multiple trigger_report
-            reports_json[report_id]['status'] = 'Complete'
+
+            with open('report_status.json', 'r') as f:
+                reports_json_live = json.load(f)
+            reports_json_live[report_id]['status'] = 'Complete'
             with open('report_status.json', 'w') as f:
-                json.dump(reports_json, f)
+                json.dump(reports_json_live, f)
             print(report_id, "Report generated successfully")
     time.sleep(1)
