@@ -50,7 +50,7 @@ This project aims to help restaurant owners monitor the uptime of their online s
                     [Preprocessing]---(SQLAlchemy ORM)--->[PostgreSQL Database]----------------------------------|         df.to_csv        |
                                                                                                                  +--------------------------+
 
-
+```css
 -> Frontend NaT
 -> Backend server takes care of
        - User DATA management
@@ -63,3 +63,4 @@ This project aims to help restaurant owners monitor the uptime of their online s
        - File download
 
 -> Flask API is used to manage users, files and data manipulation.
+```
