@@ -14,6 +14,7 @@
 """
 
 
+import time
 from flask import Flask, jsonify, request
 import uuid
 
@@ -21,7 +22,6 @@ app = Flask(__name__)
 
 # Define the database to store data
 database = []
-
 # Define the trigger_report endpoint
 @app.route('/trigger_report', methods=['GET'])
 def trigger_report():
@@ -31,6 +31,7 @@ def trigger_report():
     # Store the report ID in the database
     database.append(report_id)
 
+    print(database)
     # Return the report ID as JSON
     return jsonify({'report_id': report_id})
 
@@ -38,7 +39,8 @@ def trigger_report():
 @app.route('/get_report', methods=['GET'])
 def get_report():
     # Get the report ID from the request
-    report_id = request.args.get('report_id')
+    # report_id = request.args.get('report_id')
+    report_id = request.json['report_id']
 
     # Check if the report ID is valid
     if report_id not in database:
@@ -56,13 +58,15 @@ def get_report():
 def is_report_complete(report_id):
     # Your code to check if the report generation is complete goes here
     # Return True if the report generation is complete, else False
-    pass
+    # sleep for 20 seconds
+    time.sleep(20)
+    return True
 
 # Function to get the CSV file
 def get_csv(report_id):
     # Your code to get the CSV file goes here
     # Return the CSV file as a string
-    pass
+    return 'CSV file'
 
 # Run the Flask app
 if __name__ == '__main__':
