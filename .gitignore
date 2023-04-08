@@ -1,10 +1,14 @@
-
 .vscode
 
-Learning
 /Data/*.csv
 /venv
 
 *.pyc
 __init__.py
 __pycache__
+
+
+tuts.sql
+src/Precomputation/Configuration.py
+src/Content/Configuration.py
+src/Learning
