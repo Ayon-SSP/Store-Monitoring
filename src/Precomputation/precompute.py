@@ -60,11 +60,15 @@ report_status.json
 while True:
     with open('report_status.json', 'r') as f:
         reports_json = json.load(f)
-    if reports_json['queue'] and reports_json[reports_json['queue'][0]]['status'] == 'Running':
-        report_id = reports_json['queue'][0]
-        compute()
-        smData.get_store_report_file(report_id)
-        reports_json[report_id]['status'] = 'Complete'
+    # print(reports_json)
+    # just take the report_id where the status is running
 
-        with open('report_status.json', 'w') as f:
-            json.dump(reports_json, f)
+    for report_id in reports_json['queue']:
+        if reports_json[report_id]['status'] == 'Running':
+            compute()
+            smData.get_store_report_file(report_id)
+            # ⚠️ truncate the table
+            reports_json[report_id]['status'] = 'Complete'
+
+            with open('report_status.json', 'w') as f:
+                json.dump(reports_json, f)
