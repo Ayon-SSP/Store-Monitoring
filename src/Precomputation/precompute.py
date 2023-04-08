@@ -56,7 +56,6 @@ report_status.json
 {"queue": ["36e10e77-3f6f-499d-a5c0-b8eaa128c6af", "f960350f-89d8-4f86-94a3-63698aa06d82", "7b665ab6-ab34-40eb-9a6b-b01e9d8174d4"], "36e10e77-3f6f-499d-a5c0-b8eaa128c6af": {"status": "Running"}, "f960350f-89d8-4f86-94a3-63698aa06d82": {"status": "Running"}, "7b665ab6-ab34-40eb-9a6b-b01e9d8174d4": {"status": "Running"}}
 """
 
-# ⚠️ Need to work on this to make it effective
 while True:
     with open('report_status.json', 'r') as f:
         reports_json = json.load(f)
@@ -65,10 +64,11 @@ while True:
 
     for report_id in reports_json['queue']:
         if reports_json[report_id]['status'] == 'Running':
+            smData.truncate_store_report()
             compute()
             smData.get_store_report_file(report_id)
-            # ⚠️ truncate the table
             reports_json[report_id]['status'] = 'Complete'
 
             with open('report_status.json', 'w') as f:
                 json.dump(reports_json, f)
+            print(report_id, "Report generated successfully")

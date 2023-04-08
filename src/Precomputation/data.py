@@ -78,6 +78,34 @@ def store_report_insert(
         return True
 
 
+def truncate_store_report():
+    """ Insert a new store report into the store_report table """
+    conn = None
+    try:
+        conn = psycopg2.connect(
+            host = config.hostname,
+            dbname = config.database,
+            user = config.username,
+            password = config.pwd,
+            port = config.port_id
+        )
+        # create a new cursor
+        cur = conn.cursor()
+        # execute the INSERT statement
+        cur.execute('TRUNCATE TABLE store_report;')
+
+        # commit the changes to the database
+        conn.commit()
+
+    except Exception as error:
+        print(error)
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+        return True
+
 class Data:
     def __init__(self, store_id, date_time_now_local = '2023-01-25 0:0:0.000000'):
         self.store_id = store_id
