@@ -1,5 +1,6 @@
 import datetime
 import json
+import time
 import pandas as pd
 import data as smData
 import data_processor as dataProc
@@ -72,3 +73,4 @@ while True:
             with open('report_status.json', 'w') as f:
                 json.dump(reports_json, f)
             print(report_id, "Report generated successfully")
+    time.sleep(1)
