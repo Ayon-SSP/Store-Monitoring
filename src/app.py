@@ -1,9 +1,8 @@
 import json
-from flask import Flask, jsonify, request, send_file
 import uuid
+from flask import Flask, jsonify, request, send_file
 
 app = Flask(__name__)
-
 
 empty_reports_json = {
     "queue": []
@@ -15,7 +14,7 @@ with open('report_status.json', 'w') as f:
 # Define the trigger_report endpoint
 @app.route('/trigger_report', methods=['GET'])
 def trigger_report():
-    # Generate a unique report ID
+    """Trigger a report generation and return the report ID"""
     report_id = str(uuid.uuid4())
 
     with open('report_status.json', 'r') as f:
@@ -27,14 +26,13 @@ def trigger_report():
     with open('report_status.json', 'w') as f:
         json.dump(reports_json, f)
 
-    # Return the report ID as JSON
     return jsonify({'report_id': report_id})
 
 # Define the get_report endpoint
 @app.route('/get_report', methods=['GET'])
 def get_report():
-    # Get the report ID from the request
-    # report_id = request.args.get('report_id')
+    """Get the status of a report generation and return the status"""
+
     report_id = request.json['report_id']
 
     with open('report_status.json', 'r') as f:
@@ -44,9 +42,6 @@ def get_report():
     if report_id not in reports_json['queue']:
         return jsonify({'error': 'Invalid report ID'})
 
-    # Check if the report generation is complete
-    # If not, return "Running"
-    # If complete, return "Complete" along with the CSV file
     if is_report_complete(report_id):
         return jsonify({'status': 'Complete', 'csv': get_csv(report_id)})
     else:
@@ -54,16 +49,17 @@ def get_report():
 
 @app.route('/download/<report_id>', methods=['GET', 'POST'])
 def download_file(report_id):
-    # return send_file(filename, as_attachment=True)
+    """Download the CSV file"""
     file_path = f'res/{report_id}.csv'
     return send_file(file_path, as_attachment=True)
 
 # Function to check if the report generation is complete
 def is_report_complete(report_id):
-    # Return True if the report generation is complete, else False
+    """Check if the report generation is complete"""
 
     with open('report_status.json', 'r') as f:
         reports_json = json.load(f)
+
     if reports_json[report_id]['status'] == 'Complete':
         with open('report_status.json', 'r') as f:
             reports_json = json.load(f)
@@ -79,8 +75,7 @@ def is_report_complete(report_id):
 
 # Function to get the CSV file
 def get_csv(report_id):
-    # Your code to get the CSV file goes here
-    # script to download csv file in the browser using flask where the file is in the res/<report_id>.csv
+    """Get the CSV file"""
     return f'Download the csv file from /download/{report_id}'
 
 # Run the Flask app

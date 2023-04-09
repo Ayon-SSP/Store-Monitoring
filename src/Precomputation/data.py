@@ -5,11 +5,10 @@ from sqlalchemy import create_engine
 from Configuration import *
 import Configuration as config
 
-
 engine = create_engine(config.db_connection_string)
-engine
 
 def get_store_ids():
+    """ copy csv query from the store_status table"""
     store_ids = pd.read_sql_query('''
                         SELECT distinct store_id
                         FROM store_status;
@@ -107,6 +106,7 @@ def truncate_store_report():
         return True
 
 class Data:
+    """ Data class to get data from database"""
     def __init__(self, store_id, date_time_now_local = '2023-01-25 0:0:0.000000'):
         self.store_id = store_id
         self.date_time_now_local = date_time_now_local
@@ -118,6 +118,7 @@ class Data:
 
 
     def get_store_ids(self):
+        """ return a dataframe with store_id"""
         store_ids = pd.read_sql_query('''
                             SELECT distinct store_id
                             FROM store_status;
@@ -126,6 +127,7 @@ class Data:
         return store_ids
 
     def get_store_timezone(self):
+        """ return a string of timezone"""
         store_timezone = pd.read_sql_query('''
                                 SELECT timezone_str
                                 FROM store_timezone
@@ -137,6 +139,7 @@ class Data:
         return timezone_str
 
     def get_menu_hours(self):
+        """ return a dataframe with day_of_week, start_time_local, end_time_local"""
         menu_hours = pd.read_sql_query('''
                             SELECT day_of_week, start_time_local, end_time_local
                             FROM menu_hours
@@ -147,6 +150,7 @@ class Data:
         return menu_hours
 
     def get_store_status_UTC(self):
+        """ return a dataframe with status, timestamp_utc"""
         store_status = pd.read_sql_query('''
                             SELECT status, timestamp_utc
                             FROM store_status
@@ -157,16 +161,18 @@ class Data:
         return store_status
 
     def get_store_status(self):
+        """ return a dataframe with status, timestamp_local"""
         store_status = pd.read_sql_query('''
                             SELECT status, timestamp_utc::timestamp at time zone '{}' as timestamp_local
                             FROM store_status
                             WHERE store_id = {}
-                            order by timestamp_local;
+                            ORDER BY timestamp_local;
                         '''
                         .format(self.store_timezone,self.store_id), engine)
         return store_status
 
     def store_status_time_range_actIact(self):
+        """ return a dataframe with start_time, end_time, active_hours, inactive_hours"""
         store_status_TimeRange = self.store_status
         store_status_TimeRange['start_time'] = store_status_TimeRange['timestamp_local'].shift(1)
         store_status_TimeRange['end_time'] = store_status_TimeRange['timestamp_local']
@@ -175,4 +181,5 @@ class Data:
         return store_status_TimeRange
 
     def get_data(self):
+        """ return all data """
         return self.store_id, self.store_timezone, self.menu_hours, self.store_status, self.store_status_TimeRange_actInact

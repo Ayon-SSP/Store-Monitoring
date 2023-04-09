@@ -1,7 +1,6 @@
 import datetime
 from typing import Dict, List
 import pandas as pd
-import data as smData
 
 def get_open_hours(menu_hours: pd.DataFrame) -> dict:
     """Returns a dictionary of the open hours for each day of the week"""
@@ -23,15 +22,14 @@ def convert_times(time_tc: datetime.time) -> pd.Timedelta:
 
 # function to get the active and inactive hours between the given time range
 def get_status_timerange(menu_hours: Dict[str, List],
-            store_status_TimeRange_ActInact: pd.DataFrame,
-            LASK_HR_DATETIME: str,
-            CURRENT_DATETIME_SET: str) -> List:
+        store_status_TimeRange_ActInact: pd.DataFrame,
+        LASK_HR_DATETIME: str,
+        CURRENT_DATETIME_SET: str) -> List:
     """Returns a List of the active and inactive hours between the given time range"""
 
-
-    # get the active_hours where the start_time just after '2023-01-25 22:00:00.000000+00:00' and end_time just after '2023-01-25 23:00:00.000000+00:00'
-    sub_status_timerange = store_status_TimeRange_ActInact[(store_status_TimeRange_ActInact['end_time'] > LASK_HR_DATETIME) &
-                                                            (store_status_TimeRange_ActInact['start_time'] < CURRENT_DATETIME_SET)]
+    sub_status_timerange = store_status_TimeRange_ActInact[
+        (store_status_TimeRange_ActInact['end_time'] > LASK_HR_DATETIME) &
+        (store_status_TimeRange_ActInact['start_time'] < CURRENT_DATETIME_SET)]
 
 
     if not len(sub_status_timerange):
@@ -48,20 +46,16 @@ def get_status_timerange(menu_hours: Dict[str, List],
                 return False
         return True
     # if there is nothing to drop, then return the sub_status_timerange
-    if not len(sub_status_timerange[(sub_status_timerange['start_time'].apply(lambda x: check_time_in_range(x.time(),x.weekday())) &
-                                    sub_status_timerange['end_time'].apply(lambda x: check_time_in_range(x.time(),x.weekday())))]):
-        sub_status_timerange = sub_status_timerange.drop(sub_status_timerange[(sub_status_timerange['start_time']
-                                                                                .apply(lambda x: check_time_in_range(x.time(),x.weekday())) &
-                                                                                sub_status_timerange['end_time']
-                                                                                .apply(lambda x: check_time_in_range(x.time(),x.weekday())))].index)
+    if not len(sub_status_timerange[(sub_status_timerange['start_time']
+                                    .apply(lambda x: check_time_in_range(x.time(),x.weekday())) &
+                                    sub_status_timerange['end_time']
+                                    .apply(lambda x: check_time_in_range(x.time(),x.weekday())))]):
+        sub_status_timerange = sub_status_timerange.drop(
+            sub_status_timerange[(sub_status_timerange['start_time']
+                .apply(lambda x: check_time_in_range(x.time(),x.weekday())) &
+                sub_status_timerange['end_time']
+                .apply(lambda x: check_time_in_range(x.time(),x.weekday())))].index)
     # print(sub_status_timerange)
-
-    # sub_status_timerange = sub_status_timerange[sub_status_timerange['start_time'].apply(lambda x: x.time() in menu_hours[x.weekday()]) & sub_status_timerange['end_time'].apply(lambda x: x.time() in menu_hours[x.weekday()])]
-
-
-
-
-
 
     sum_active_hours, sum_inactive_hours = sub_status_timerange['active_hours'].sum(), sub_status_timerange['inactive_hours'].sum()
 
@@ -72,8 +66,8 @@ def get_status_timerange(menu_hours: Dict[str, List],
     else:
         sum_inactive_hours -= start_extra_time
 
-
-    # # calculate the time between CURRENT_DATETIME_SET and sub_status_timerange['end_time'] last row
+    # # calculate the time between CURRENT_DATETIME_SET and
+    # sub_status_timerange['end_time'] last row
     end_extra_time = sub_status_timerange['end_time'].iloc[-1] - CURRENT_DATETIME_SET
     if sub_status_timerange['status'].iloc[-1] == 'active':
         sum_active_hours -= end_extra_time

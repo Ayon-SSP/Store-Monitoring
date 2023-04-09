@@ -1,3 +1,5 @@
+"""Configuration file for the application"""
+
 # rename this file to Configuration.py and fill in the values
 
 hostname = '<localhost>'
