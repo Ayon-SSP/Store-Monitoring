@@ -158,8 +158,8 @@ class Data:
 
     def get_store_status(self):
         store_status = pd.read_sql_query('''
-                            select status, timestamp_utc::timestamp at time zone '{}' as timestamp_local
-                            from store_status
+                            SELECT status, timestamp_utc::timestamp at time zone '{}' as timestamp_local
+                            FROM store_status
                             WHERE store_id = {}
                             order by timestamp_local;
                         '''

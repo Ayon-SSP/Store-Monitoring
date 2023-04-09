@@ -33,7 +33,14 @@ def get_status_timerange(menu_hours: Dict[str, List],
     sub_status_timerange = store_status_TimeRange_ActInact[(store_status_TimeRange_ActInact['end_time'] > LASK_HR_DATETIME) &
                                                             (store_status_TimeRange_ActInact['start_time'] < CURRENT_DATETIME_SET)]
 
+    # print(sub_status_timerange,menu_hours)
+
+    if not len(sub_status_timerange):
+        return [datetime.timedelta(hours=0), datetime.timedelta(hours=0)]
+
     def check_time_in_range(time, weekday):
+        if not len(menu_hours[weekday]):
+            return False
         for i in range(0, len(menu_hours[weekday])):
             if time >= menu_hours[weekday][i][0] and time <= menu_hours[weekday][i][1]:
                 return False
@@ -43,13 +50,11 @@ def get_status_timerange(menu_hours: Dict[str, List],
                                                                             .apply(lambda x: check_time_in_range(x.time(),x.weekday())) &
                                                                             sub_status_timerange['end_time']
                                                                             .apply(lambda x: check_time_in_range(x.time(),x.weekday())))].index)
-    # print(sub_status_timerange)
+    print(sub_status_timerange)
 
     # sub_status_timerange = sub_status_timerange[sub_status_timerange['start_time'].apply(lambda x: x.time() in menu_hours[x.weekday()]) & sub_status_timerange['end_time'].apply(lambda x: x.time() in menu_hours[x.weekday()])]
 
 
-    if not len(sub_status_timerange):
-        return [datetime.timedelta(hours=0), datetime.timedelta(hours=0)]
 
 
 
