@@ -46,14 +46,15 @@ LASK_7DAYS_DATETIME = CURRENT_DATETIME_SET - datetime.timedelta(days=7)
 ```
 
 ## 3. Get all the unique store_ids = smData.get_store_ids()
+> To compute the uptime/downtime for each `store_id`
 ```sql
 SELECT distinct store_id
 FROM store_status;
 ```
 
-## 4. Generate the store_status_compute dataframe whith ranged active/inactive status
+## 4. Generate the `store_status_compute` dataframe whith ranged active/inactive status
 
-### 4.1. Get the menu_hours data for each store_id and convert the dataframe to dictionary and if no data then set 'America/Chicago'
+### 4.1. Get the menu_hours data for each `store_id` and convert the dataframe to dictionary and if no data then set 'America/Chicago'
 ```sql
 SELECT timezone_str
 FROM store_timezone
@@ -63,15 +64,16 @@ WHERE store_id = store_id;
 timezone_str = store_timezone['timezone_str'][0] if len(store_timezone) > 0 else 'America/Chicago'
 ```
 
-### 4.2. Get the last 7days store_status data for each store_id and convert the timestamp_utc to timestamp_local
+### 4.2. Get the last 7days store_status data for each `store_id` and convert the timestamp_utc to timestamp_local
 ```sql
 SELECT status, timestamp_utc::timestamp at time zone 'store_timezone' as timestamp_local
 FROM store_status
 WHERE store_id = store_id
 order by timestamp_local;
 ```
-let's this dataframe be **store_status_compute**
-> eg: store_id = 7832590722878413297
+let's this dataframe be`store_status_compute`
+> eg: `store_id` = 7832590722878413297
+> old Table -> new DataFrame
 > ```excel
 >        status              timestamp_utc                    status                  timestamp_local
 > 0    inactive 2023-01-18 00:09:50.541419             0    inactive 2023-01-18 05:09:50.541419+00:00
@@ -79,7 +81,7 @@ let's this dataframe be **store_status_compute**
 > 2    inactive 2023-01-18 02:08:06.892883             2    inactive 2023-01-18 07:08:06.892883+00:00
 > 3    inactive 2023-01-18 03:01:20.661140             3    inactive 2023-01-18 08:01:20.661140+00:00
 > 4    inactive 2023-01-18 04:09:04.075382             4    inactive 2023-01-18 09:09:04.075382+00:00
-> ..        ...                        ...     -->     ..        ...                              ...
+> ..        ...                        ...    --->     ..        ...                              ...
 > 240    active 2023-01-25 16:06:05.179555             240    active 2023-01-25 21:06:05.179555+00:00
 > 241    active 2023-01-25 17:01:19.496218             241    active 2023-01-25 22:01:19.496218+00:00
 > 242    active 2023-01-25 17:06:45.790348             242    active 2023-01-25 22:06:45.790348+00:00
@@ -88,12 +90,13 @@ let's this dataframe be **store_status_compute**
 > ```
 
 
-### 4.3. store_status_compute add start_time & end_time
+### 4.3. `store_status_compute` add `start_time` & `end_time`
+> By doing this we can get the time range for each status
 ```python
 store_status_TimeRange['start_time'] = store_status_TimeRange['timestamp_local'].shift(1)
 store_status_TimeRange['end_time'] = store_status_TimeRange['timestamp_local']
 ```
-> eg: store_id = 7832590722878413297
+> eg: `store_id` = 7832590722878413297
 > ```excel
 >        status                  timestamp_local              status                  timestamp_local                       start_time                         end_time
 > 0    inactive 2023-01-18 05:09:50.541419+00:00            0    inactive 2023-01-18 05:09:50.541419+00:00                              NaT 2023-01-18 05:09:50.541419+00:00
@@ -109,13 +112,14 @@ store_status_TimeRange['end_time'] = store_status_TimeRange['timestamp_local']
 > 244    active 2023-01-25 23:03:17.170336+00:00            244    active 2023-01-25 23:03:17.170336+00:00 2023-01-25 23:00:54.239712+00:00 2023-01-25 23:03:17.170336+00:00
 > ```
 
-### 4.4. Add active_hours & inactive_hours
+### 4.4. Add `active_hours` & `inactive_hours` columns
+> By doing this we can get the time range for each status
 ```python
 store_status_TimeRange['active_hours'] = store_status_TimeRange.apply(lambda x: x['end_time'] - x['start_time'] if x['status'] == 'active' else datetime.timedelta(hours=0), axis=1)
 store_status_TimeRange['inactive_hours'] = store_status_TimeRange.apply(lambda x: x['end_time'] - x['start_time'] if x['status'] == 'inactive' else datetime.timedelta(hours=0), axis=1)
 ```
 
-> eg: store_id = 7832590722878413297
+> eg: `store_id` = 7832590722878413297
 > ```excel
 >   status                  timestamp_local                       start_time                         end_time
 > 0    inactive 2023-01-18 05:09:50.541419+00:00                              NaT 2023-01-18 05:09:50.541419+00:00
@@ -123,14 +127,15 @@ store_status_TimeRange['inactive_hours'] = store_status_TimeRange.apply(lambda x
 > 2    inactive 2023-01-18 07:08:06.892883+00:00 2023-01-18 06:10:07.117301+00:00 2023-01-18 07:08:06.892883+00:00
 > 3    inactive 2023-01-18 08:01:20.661140+00:00 2023-01-18 07:08:06.892883+00:00 2023-01-18 08:01:20.661140+00:00
 > 4    inactive 2023-01-18 09:09:04.075382+00:00 2023-01-18 08:01:20.661140+00:00 2023-01-18 09:09:04.075382+00:00
-> ..        ...                              ...                              ...                              ...    -->
+> ..        ...                              ...                              ...                              ...
 > 240    active 2023-01-25 21:06:05.179555+00:00 2023-01-25 21:00:44.204098+00:00 2023-01-25 21:06:05.179555+00:00
 > 241    active 2023-01-25 22:01:19.496218+00:00 2023-01-25 21:06:05.179555+00:00 2023-01-25 22:01:19.496218+00:00
 > 242    active 2023-01-25 22:06:45.790348+00:00 2023-01-25 22:01:19.496218+00:00 2023-01-25 22:06:45.790348+00:00
 > 243    active 2023-01-25 23:00:54.239712+00:00 2023-01-25 22:06:45.790348+00:00 2023-01-25 23:00:54.239712+00:00
 > 244    active 2023-01-25 23:03:17.170336+00:00 2023-01-25 23:00:54.239712+00:00 2023-01-25 23:03:17.170336+00:00
 > ```
->
+>   |
+>   ↓
 > ```excel
 >        status                  timestamp_local                       start_time                         end_time           active_hours         inactive_hours
 > 0    inactive 2023-01-18 05:09:50.541419+00:00                              NaT 2023-01-18 05:09:50.541419+00:00        0 days 00:00:00                    NaT
@@ -146,8 +151,7 @@ store_status_TimeRange['inactive_hours'] = store_status_TimeRange.apply(lambda x
 > 244    active 2023-01-25 23:03:17.170336+00:00 2023-01-25 23:00:54.239712+00:00 2023-01-25 23:03:17.170336+00:00 0 days 00:02:22.930624        0 days 00:00:00
 > ```
 
-### 4.5. Now remove the time intervals that are not in the menu_hours
-
+### 4.5. Now remove the time intervals that are not in the `menu_hours`
 ```python
 def check_time_in_range(time, weekday):
     for i in range(0, len(menu_hours[weekday])):
@@ -161,7 +165,7 @@ sub_status_timerange = sub_status_timerange.drop(sub_status_timerange[(sub_statu
                                                                         .apply(lambda x: check_time_in_range(x.time(),x.weekday())))].index)
 ```
 
-> eg. lets take the current time as *'2023-01-25 20:00:00.000000+00:00'* and if we want the last 24hrs data, then we need to remove the time intervals that are not in the menu hours for the current day. take store_id = 7832590722878413297 as an example, we have the following time intervals:
+> eg. lets take the current time as *'2023-01-25 20:00:00.000000+00:00'* and if we want the last 24hrs data, then we need to remove the time intervals that are not in the menu hours for the current day. take `store_id` = 7832590722878413297 as an example, we have the following time intervals:
 > ```excel
 >        status                  timestamp_local                       start_time                         end_time           active_hours         inactive_hours
 > 187    active 2023-01-24 20:00:49.407196+00:00 2023-01-24 19:04:28.032808+00:00 2023-01-24 20:00:49.407196+00:00 0 days 00:56:21.374388        0 days 00:00:00
@@ -258,8 +262,8 @@ sub_status_timerange = sub_status_timerange.drop(sub_status_timerange[(sub_statu
 > 237    active 2023-01-25 20:01:55.497484+00:00 2023-01-25 19:08:09.876675+00:00 2023-01-25 20:01:55.497484+00:00 0 days 00:53:45.620809        0 days 00:00:00
 > ```
 
-## 5. Now compute the hours overlap and uptime/downtime for each store_id
-> for this we need to calculate the sum of the active_hours and inactive_hours for each store_id and removing end_extra_time and start_extra_time for the sum_active_hours and sum_inactive_hours
+## 5. Now compute the hours overlap and uptime/downtime for each `store_id`
+> for this we need to calculate the sum of the `active_hours` and `inactive_hours` for each `store_id` and removing `end_extra_time` and `start_extra_time` for the `sum_active_hours` and `sum_inactive_hours`
 
 ```python
 if not len(sub_status_timerange):
@@ -285,7 +289,7 @@ else:
 return [sum_active_hours, sum_inactive_hours]
 ```
 
-> eg: let's take the above example to calculate the sum_active_hours and sum_inactive_hours
+> eg: let's take the above example to calculate the `sum_active_hours` and `sum_inactive_hours`
 > ```excel
 >        status                  timestamp_local                       start_time                         end_time           active_hours         inactive_hours
 > 187    active 2023-01-24 20:00:49.407196+00:00 2023-01-24 19:04:28.032808+00:00 2023-01-24 20:00:49.407196+00:00 0 days 00:56:21.374388        0 days 00:00:00
@@ -327,8 +331,8 @@ return [sum_active_hours, sum_inactive_hours]
 > 236    active 2023-01-25 19:08:09.876675+00:00 2023-01-25 19:02:52.698802+00:00 2023-01-25 19:08:09.876675+00:00 0 days 00:05:17.177873        0 days 00:00:00
 > 237    active 2023-01-25 20:01:55.497484+00:00 2023-01-25 19:08:09.876675+00:00 2023-01-25 20:01:55.497484+00:00 0 days 00:53:45.620809        0 days 00:00:00
 > ```
-> **uptime_last_day = 0 days 16:57:59.880872**
+> **`uptime_last_day` = 0 days 16:57:59.880872**
 >
-> **downtime_last_day = 0 days 01:59:22.766348**
+> **`downtime_last_day` = 0 days 01:59:22.766348**
 >
 > symillarly for last 7 days and last 1 hour
