@@ -1,4 +1,4 @@
-# Monitoring_Flask-RestAPI-pgadmin-sql
+# Monitoring_Flask-RestAPI-pgadmin-sql [`📺 Video Link`](https://youtu.be/n2GgGz60j1A)
 
 This project aims to help restaurant owners monitor the uptime of their online stores during business hours. The backend APIs provided in this project will allow restaurant owners to view reports on past store inactivity.
 # 🎯 Block Model
