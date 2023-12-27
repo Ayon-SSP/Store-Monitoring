@@ -9,7 +9,6 @@ __init__.py
 __pycache__
 
 
-tuts.sql
 src/Precomputation/Configuration.py
 src/Content/Configuration.py
 src/Learning
